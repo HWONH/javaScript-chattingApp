@@ -1,0 +1,23 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap');
+
+*{box-sizing: border-box;font-family: "Noto Sans KR", sans-serif;}
+html, body{margin: 0;padding: 0;}
+header, section, article{display: block;}
+header:after, section:after, article:after{content: "";display: block;clear: both;}
+h1, h2, h3, h4, h5, h6, p{margin: 0;}
+ul, ol{margin: 0;padding: 0;list-style: none;}
+a{color: inherit;text-decoration: none;}
+
+header{height: 60px;background-color: #363636;}
+header .logo{height: 100%;padding: 10px 0;text-align: center;}
+header .logo a{display: block;height: 100%;}
+
+section{height: calc(100vh - 60px);background-color: #212121;}
+section article{height: 80%;padding: 20px;border: 1px solid #ffffaa;overflow: hidden;}
+section article #messages{height: 100%;overflow-y: auto;}
+section article #messages li{display: block;margin-top: 20px;font-size: 15px;color: #ffffff;}
+section article #messages li span{display: inline-block;padding: 20px;background-color: rgba(0,0,0,.5);border-radius: 10px;}
+section form{width: 100%;height: 20%;font-size: 0;}
+section form textarea{display: inline-block;vertical-align: top;width: 70%;height: 100%;padding: 8px;}
+section form input{display: inline-block;vertical-align: top;width: 30%;height: 100%;cursor: pointer;}

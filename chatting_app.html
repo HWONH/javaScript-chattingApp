@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatting app</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- firebase app 연동/The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-app.js"></script>
+    <!-- firebase database 연동(Realtime 선택했기 때문에 websocket을 통해 실시간으로 데이터베이스를 가져온다) -->
+    <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBqYEPbFee6KiF5eIp4Mp9aiDH6gJFUneM",
+            authDomain: "my-chatting-app-1a4ac.firebaseapp.com",
+            databaseURL: "https://my-chatting-app-1a4ac.firebaseio.com",
+            projectId: "my-chatting-app-1a4ac",
+            storageBucket: "my-chatting-app-1a4ac.appspot.com",
+            messagingSenderId: "372374086331",
+            appId: "1:372374086331:web:74788a1c9a1c380d137f9e"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        /* #2-0 추가로 작성해야 할 스크립트 */
+        var myName=prompt("이름을 작성해 주세요");
+        function sendMessage(){
+            // 메시지 보내기
+            var message=document.getElementById("message").value;
+            // #2-2 데이터 베이스에 저장하기
+            firebase.database().ref("messages").push().set({
+                "sender" : myName, // 작성자
+                "message" : message// 작성한 메시지
+            });
+            // 전송 클릭에 의한 form 태그 전송을 막기 위함. action의 기본값은 action=""
+            return false;
+        }
+
+        // #3 메시지 리스트 가져오기(화면상에 표출)
+        firebase.database().ref("messages").on("child_added", function(snapshot){
+            var html="";
+            html+="<li id='message-"+snapshot.key+"'><span>";
+            // #3-1 작성자에 의한 삭제 버튼 추가
+            if(snapshot.val().sender==myName){
+                html+="<button data-id='"+snapshot.key+"' onclick='deleteMessage(this);'>";
+                html+="삭제";
+                html+="</button>";
+            }
+            html+=snapshot.val().sender+":"+snapshot.val().message;
+            html+="</span></li>";
+
+            document.getElementById("messages").innerHTML+=html;
+        });
+        // #3-2 삭제 기능 함수문(삭제 버튼 클릭시)
+        function deleteMessage(self){
+            var messageId=self.getAttribute("data-id");
+            // database 내부에서 데이터 삭제
+            firebase.database().ref("messages").child(messageId).remove();
+        }
+        // #3-3 삭제된 메시지에 대한 표현
+        firebase.database().ref("messages").on("child_removed", function(snapshot){
+            // 문서 상에서 삭제된 항목에 대한 대체문구
+            document.getElementById("message-"+snapshot.key).innerHTML="삭제된 메시지입니다.";
+        });
+
+    </script>
+    <!-- fieebase의 realtime database를 사용하기 때문에 두 가지 브라우저는 하나의 공간을 바라보게 됨 -->
+    <header>
+        <div class="logo"><a href="">Brand</a></div>
+    </header>
+    <section>
+        <!-- 채팅한 기록물을 담을 곳 -->
+        <article>
+            <ul id="messages"></ul>
+        </article>
+        <!-- #2-1 폼 입력요소 양식을 작성할 공간 -->
+        <form onsubmit="return sendMessage();">
+            <textarea type="text" id="message" placeholder="메시지를 입력하세요" autocomplete="off"></textarea>
+            <input type="submit" value="메시지 전송">
+        </form>
+    </section>
+</body>
+</html>
